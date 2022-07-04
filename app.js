@@ -19,6 +19,7 @@ const articleSchema = {
 //creating a new model and linking it to the schema
 const Article = mongoose.model("Article", articleSchema);
 
+//Requests targetting All Articles
 //A route handler that eliminates redundancy in calling the methods
 app.route("/articles")
     .get((req, res) => {
@@ -31,7 +32,7 @@ app.route("/articles")
             //Console logs the output to the terminal
             // console.log(foundArticles);
             //This now sends the result to the articles page in the browser
-        });
+        })
     }).post((req, res) => {
         console.log(req.body.title);
         console.log(req.body.content);
@@ -48,7 +49,7 @@ app.route("/articles")
             } else {
                 res.send(err);
             }
-        });
+        })
     }).delete((req, res) => {
         Article.deleteMany((err) => {
             if (!err) {
@@ -57,8 +58,21 @@ app.route("/articles")
                 res.send(err);
             }
         });
-    })
+    });
 
+
+//Requests targetting All Articles
+
+app.route("articles/:articleTitle")
+    .get((req, res) => {
+        Article.findOne({ title: req.params.articleTitle }, (err, foundArticle) => {
+            if (foundArticle) {
+                res.send(foundArticle);
+            } else {
+                res.send("No articles atching that title was found.");
+            }
+        });
+    });
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({
@@ -68,9 +82,7 @@ app.use(express.static("public"));
 
 
 //A get method to retrieve data from the database
-app.get("/articles");
-app.delete("/articles");
-app.post("/articles");
+
 app.listen(3000, function() {
     console.log("Server started on port 3000");
 });
