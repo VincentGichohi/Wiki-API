@@ -74,11 +74,47 @@ app.route("/articles/:articleTitle")
         });
     })
     .put((req, res) => {
-        Article.update({ title: req.params.articleTitle }, { title: req.body.title, content: req.body.content }, { overwrite: true },
+        Article.updateMany(
+
+            { title: req.params.articleTitle },
+
+            { title: req.body.title, content: req.body.content },
+
+            { overwrite: true },
             (err) => {
-                res.send("Successfully updated article.")
-            })
+                if (!err) {
+                    res.send("Successfully updated article.");
+                } else {
+                    res.send(err);
+                }
+            }
+        );
     })
+    .patch((req, res) => {
+        Article.updateMany(
+
+            { title: req.params.articleTitle }, { $set: req.body },
+            (err) => {
+                if (!err) {
+                    res.send("Successfully updated article.")
+                } else {
+                    res.send(err);
+                }
+            }
+        );
+    })
+    .delete((req, res) => {
+        Article.deleteOne({ title: req.params.articleTitle },
+            (err) => {
+                if (!err) {
+                    res.send("Successfully deleted the corresponding article.");
+                } else {
+                    res.send(err);
+                }
+            });
+    });
+
+
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({
