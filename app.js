@@ -63,16 +63,22 @@ app.route("/articles")
 
 //Requests targetting All Articles
 
-app.route("articles/:articleTitle")
+app.route("/articles/:articleTitle")
     .get((req, res) => {
         Article.findOne({ title: req.params.articleTitle }, (err, foundArticle) => {
             if (foundArticle) {
                 res.send(foundArticle);
             } else {
-                res.send("No articles atching that title was found.");
+                res.send("No articles matching that title was found.");
             }
         });
-    });
+    })
+    .put((req, res) => {
+        Article.update({ title: req.params.articleTitle }, { title: req.body.title, content: req.body.content }, { overwrite: true },
+            (err) => {
+                res.send("Successfully updated article.")
+            })
+    })
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({
